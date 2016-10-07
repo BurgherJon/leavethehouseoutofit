@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leave the House Out of It!</title>
+    <style> table, th, td {border: 1px solid black;}
+</style>
+</head>
+<body>
+ 
+    <form action="javascript:void(0);">
+         <div><input id="theButton" type="submit" value="Test"></div>
+   	</form>
+    TTThe output of the method is: <br>
+    <div id="result"></div>
+    
+    <script type="text/javascript">
+       	    
+    
+    	function init() 
+        {
+	   			//Parameters are APIName,APIVersion,CallBack function,API Root 
+            	gapi.client.load('playerAPI', 'v1', callback, 'https://leavethehouseoutofit.appspot.com/_ah/api/');
+       			//gapi.client.load('playerAPI', 'v1', callback, 'http://localhost:8080/_ah/api');
+       			
+       			document.getElementById('theButton').onclick = function() 
+                {
+                  	test();
+                }
+       			
+       			var callback = function() 
+            	{
+       				//Don't care in this case, more important for oauth.
+            	}
+        }
+        
+    	
+    	//Shows the home screen.
+    	function test()
+    	{
+    		var badHTML = "Button Pushed<br>";
+			
+			document.getElementById('result').innerHTML = badHTML;
+    		
+    		try
+    		{
+    			    			
+    			//Build the Request Object
+ 	            var requestData = {};
+ 	            requestData.id = 1; //Bojan... remember, request data doesn't matter in test harness.
+    			
+ 	            gapi.client.playerAPI.getTeam(requestData).execute(function(resp)  
+        		{		
+        			var goodHTML = "Made the call.<br>"
+ 	            	
+ 	            	if (!resp.code) 
+	               	{
+    	    			resp.items = resp.items || [];
+	    	   			
+    	    			goodHTML = goodHTML + "No apprent error!<br>";
+    	    			goodHTML = goodHTML + resp.name + "<br>";
+    	    			document.getElementById('result').innerHTML = goodHTML;
+	               	}
+    	    		else
+        			{
+    	    			goodHTML = goodHTML + 'Error in retreiving 1';
+    	    			document.getElementById('result').innerHTML = goodHTML;
+        			}
+        		});
+    		}
+    		catch(err)
+          	{
+    			badHTML = badHTML + err.message;
+    			document.getElementById('result').innerHTML = badHTML;
+          	}
+    	
+    	}
+    </script>
+    
+    <script src="https://apis.google.com/js/client.js?onload=init"></script>
+    
+    
+</body>
+</html>

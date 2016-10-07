@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Leave the House Out of It!</title>
+		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css"></link>
+		<script src="/js/jquery.min.js" type="text/javascript" ></script>
+		<script src="bootstrap/js/bootstrap.min.js"></script>
+		<script src="appfunctions.js"></script>
+		<script> 	
+			function init() 
+			{
+				apisToLoad = 2;
+				
+				var callback = function() 
+				{
+					if (--apisToLoad == 0) 
+					{
+					      signin(true, userAuthed);
+					   }
+				}
+				
+				//LOCALCHANGE (SWITCH BETWEEN LOCAL AND NOT)
+				gapi.client.load('playerAPI', 'v1', callback, 'https://leavethehouseoutofit.appspot.com/_ah/api');
+				//gapi.client.load('playerAPI', 'v1', callback, 'http://localhost:8080/_ah/api');
+				
+				gapi.client.load('oauth2', 'v2', callback);
+			}
+			
+			function signin(mode, callbackparam)
+			{	
+				var scopes = 'https://www.googleapis.com/auth/userinfo.email';
+				var client_id = '470243017734-h8rqcqsmvbhh4qrc95dra34anvo6h4ci.apps.googleusercontent.com';
+				
+				gapi.auth.authorize({client_id: client_id,scope: scopes, immediate: mode},callbackparam);
+				
+				
+			}
+
+			function userAuthed()
+			{
+				var request = gapi.client.oauth2.userinfo.get().execute(function(resp) 
+				{
+				
+					if (!resp.code) 
+					{
+				   		getCurrentWeek();
+					}
+				})
+			}
+
+			function auth()
+			{
+				signin(false, userAuthed);
+			}
+			
+		</script>
+		<script src="https://apis.google.com/js/client.js?onload=init"></script>
+	</head>
+	<body>
+
+		<div id="maincontainer" class="container"><button type="submit" class="btn btn-lg btn-group-justified btn-danger" style="white-space: normal" onclick=auth()>Load</button></div>
+		
+	</body>
+</html>
