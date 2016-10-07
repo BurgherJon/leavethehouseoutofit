@@ -45,6 +45,7 @@
 					if (!resp.code) 
 					{
 				   		getCurrentWeek();
+				   		getStandings();
 					}
 				})
 			}
@@ -60,6 +61,7 @@
 	<body>
 
 		<div id="maincontainer" class="container"><button type="submit" class="btn btn-lg btn-group-justified btn-danger" style="white-space: normal" onclick=auth()>Load</button></div>
+		<div id="standings" class="container"></div>
 		
 	</body>
 </html>

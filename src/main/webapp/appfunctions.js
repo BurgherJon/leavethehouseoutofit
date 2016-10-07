@@ -35,6 +35,7 @@ function getCurrentWeek()
 			{
 				currentWeek = resp.number;
 				getGames(currentWeek);
+				getStandings();
 			}
 			else
 			{
@@ -42,8 +43,6 @@ function getCurrentWeek()
 				document.getElementById('maincontainer').innerHTML = goodHTML;
 			}
 		});
-		
-	
 	
 }
 
@@ -189,12 +188,13 @@ function getGames(currentWeek)
 		requestData.league_season_id = templeague_season_id;
 		requestData.week = currentWeek;
 		
-		document.getElementById('maincontainer').innerHTML = "Made it at least this far " + currentWeek;
+		//document.getElementById('maincontainer').innerHTML = "Made it at least this far " + currentWeek;
+		document.getElementById('maincontainer').innerHTML = "<div class=\"row\"><h2>Leave The House Out Of It</h2></div>";
 
 		gapi.client.playerAPI.getGames(requestData).execute(function(resp)  
 		{		
-			var goodHTML = "<div>headers</div>"
-			document.getElementById('maincontainer').innerHTML = "test 2";
+			var goodHTML = "<div class=\"row\"><h2>Leave The House Out Of It</h2></div>";
+			//document.getElementById('maincontainer').innerHTML = "test 2";
 			
 			if (!resp.code) 
            	{
@@ -279,7 +279,7 @@ function getGame(id)
 	requestData.game_id = id;
 	
 	//alert("initially setting variable with something bogus");
-	var getGameReturn = "something bogus";
+	//var getGameReturn = "something bogus";
 	
 	gapi.client.playerAPI.getGame(requestData).execute(function(resp)  
 	{
@@ -304,6 +304,89 @@ function getGame(id)
 		{
 			goodHTML = goodHTML + 'Error in retreiving 1';
 			document.getElementById('maincontainer').innerHTML = goodHTML;
+		}
+	});
+}	
+
+function getStandings()
+{
+
+	//document.getElementById('standings').innerHTML = "STANDINGS PANE";
+	var standingsHTML = "";
+	
+	var requestData = {};
+	requestData.league_season = templeague_season_id;  //
+	
+	gapi.client.playerAPI.getUsers(requestData).execute(function(resp)  
+	{
+		
+		if (!resp.code) 
+		{
+			
+			//alert("Got the standings callback!");
+			resp.items = resp.items || [];
+			
+			standingsHTML = standingsHTML + "<div class=\"row\"><h2>Standings</h2></div>"
+			
+    		standingsHTML = standingsHTML + "<div class=\"row\">";
+			standingsHTML = standingsHTML + "<div class=\"col-sm-2\"></div>";
+			standingsHTML = standingsHTML + "<div class=\"col-sm-3\">";
+			standingsHTML = standingsHTML + "<h3>Name</h3>";
+			standingsHTML = standingsHTML + "</div>"
+			standingsHTML = standingsHTML + "<div class=\"col-sm-1 text-center\">";
+			standingsHTML = standingsHTML + "<h3>Win</h3>";
+			standingsHTML = standingsHTML + "</div>"
+			standingsHTML = standingsHTML + "<div class=\"col-sm-1 text-center\">";
+			standingsHTML = standingsHTML + "<h3>Lose</h3>";
+			standingsHTML = standingsHTML + "</div>"
+			standingsHTML = standingsHTML + "<div class=\"col-sm-1 text-center\">";
+			standingsHTML = standingsHTML + "<h3>Push</h3>";
+			standingsHTML = standingsHTML + "</div>"
+			standingsHTML = standingsHTML + "<div class=\"col-sm-2 text-right\">";
+			standingsHTML = standingsHTML + "<h3>Winnings</h3>";
+			standingsHTML = standingsHTML + "</div>";
+			standingsHTML = standingsHTML + "<div class=\"col-sm-2\"></div>";
+			standingsHTML = standingsHTML + "</div>";
+
+			
+			for (c=0;c<resp.items.length;c++)
+    		{
+    			var currencyPrefix = "";
+				
+				standingsHTML = standingsHTML + "<hr style=\"margin:3px;\" />";
+    			standingsHTML = standingsHTML + "<div class=\"row\">";
+				standingsHTML = standingsHTML + "<div class=\"col-sm-2\"></div>";
+				standingsHTML = standingsHTML + "<div class=\"col-sm-3\">";
+				standingsHTML = standingsHTML + resp.items[c].fname + " " + resp.items[c].linitial + ".";
+				standingsHTML = standingsHTML + "</div>"
+				standingsHTML = standingsHTML + "<div class=\"col-sm-1 text-center\">";
+				standingsHTML = standingsHTML + resp.items[c].wins;
+				standingsHTML = standingsHTML + "</div>"
+				standingsHTML = standingsHTML + "<div class=\"col-sm-1 text-center\">";
+				standingsHTML = standingsHTML + resp.items[c].losses;
+				standingsHTML = standingsHTML + "</div>"
+				standingsHTML = standingsHTML + "<div class=\"col-sm-1 text-center\">";
+				standingsHTML = standingsHTML + resp.items[c].pushes;
+				standingsHTML = standingsHTML + "</div>"
+				standingsHTML = standingsHTML + "<div class=\"col-sm-2 text-right\">";
+				if (resp.items[c].winnings >= 0) {
+					standingsHTML = standingsHTML + "$" + resp.items[c].winnings.toFixed(2);}
+				else {
+					standingsHTML = standingsHTML + "-$" + resp.items[c].winnings.toFixed(2)*(-1);}
+				standingsHTML = standingsHTML + "</div>";
+				standingsHTML = standingsHTML + "<div class=\"col-sm-2\"></div>";
+				standingsHTML = standingsHTML + "</div>";
+
+			}
+			
+			standingsHTML = standingsHTML + "<div style=\"margin-bottom:40px\";>&nbsp;</div>";
+			
+    		document.getElementById('standings').innerHTML = standingsHTML;
+		}
+		else
+		{
+			goodHTML = goodHTML + 'Error in retreiving 1';
+			document.getElementById('standings').innerHTML = "ERRRORRR"
 		}
 	});
 	
