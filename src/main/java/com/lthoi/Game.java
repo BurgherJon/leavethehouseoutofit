@@ -176,7 +176,7 @@ public class Game
 						}
 						else
 						{
-							this.user_net_home_bet += house_amount;
+							this.user_net_home_bet -= house_amount;
 						}
 					}
 					else
@@ -189,7 +189,7 @@ public class Game
 						}
 						else
 						{
-							this.user_net_home_bet -= house_amount;
+							this.user_net_home_bet += house_amount;
 						}
 					}
 				while (rs.next());
