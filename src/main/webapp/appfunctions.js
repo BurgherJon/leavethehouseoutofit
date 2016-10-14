@@ -89,15 +89,15 @@ function paintRow(item)
 	
 	//UNALTERED DEFAULT BUTTONS
 	
-	var displayTypeHome = "<div class=\"col-lg-3 col-sm-4 col-xs-5\"><a id=\"" + item.home_team + "\" href=\"#\" onclick=\"setBet(\'" + item.home_team + "\'," + item.id + ")\" class=\"btn btn-primary btn-lg col-sm-12\" style=\"text-align:right;\">" + item.home_team + " | " + item.home_line + "</a></div>";
-	var displayTypeAway = "<div class=\"col-lg-3 col-sm-4 col-xs-5\"><a id=\"" + item.away_team + "\" href=\"#\" onclick=\"setBet(\'" + item.away_team + "\'," + item.id + ")\" class=\"btn btn-primary btn-lg col-sm-12\" style=\"text-align:left;\">" + item.away_team + "</a></div>";
+	var displayTypeHome = "<div class=\"col-lg-3 col-sm-4 col-xs-5\"><a id=\"" + item.home_team + "\" href=\"#\" onclick=\"setBet(\'" + item.home_team + "\'," + item.id + ")\" class=\"btn btn-primary btn-lg col-sm-12\" style=\"text-align:right;\">" + item.home_team + " | " + item.home_score + "</a></div>";
+	var displayTypeAway = "<div class=\"col-lg-3 col-sm-4 col-xs-5\"><a id=\"" + item.away_team + "\" href=\"#\" onclick=\"setBet(\'" + item.away_team + "\'," + item.id + ")\" class=\"btn btn-primary btn-lg col-sm-12\" style=\"text-align:left;\">" + item.away_score + " | " + item.away_team + "</a></div>";
 	
 	
 	if(betLocked)
 	{
 		//DISPLAYED LABELS FOR LOCKED GAMES
-		displayTypeHome = "<div class=\"col-lg-3 col-sm-4 col-xs-5 btn btn-lg btn-default disabled\" style=\"text-align:right;\">" + item.home_team + " | " + item.home_line + "</div>";
-		displayTypeAway = "<div class=\"col-lg-3 col-sm-4 col-xs-5 btn btn-lg btn-default disabled\" style=\"text-align:left;\">" + item.away_team + "</div>";
+		displayTypeHome = "<div class=\"col-lg-3 col-sm-4 col-xs-5 btn btn-lg btn-default disabled\" style=\"text-align:right;\">" + item.home_team + " | " + item.home_score + "</div>";
+		displayTypeAway = "<div class=\"col-lg-3 col-sm-4 col-xs-5 btn btn-lg btn-default disabled\" style=\"text-align:left;\">" + item.away_score + " | " + item.away_team + "</div>";
 	}
 	
 	var home_bets = item.home_bets || [];
@@ -120,7 +120,7 @@ function paintRow(item)
 			if (home_bets[z].email == tempemail && betUnlocked)  // !CAUTION!
 			{
 				//alert("I bet on that!" + home_bets.email)
-				displayTypeHome = "<div class=\"col-lg-3 col-sm-4 col-xs-5\"><a class=\"col-lg-12 col-sm-12 col-xs-12 btn btn-lg btn-success \" id=\"" + item.home_team + "\" href=\"#\" onclick=\"deleteBet(\'" + item.home_team + "\'," + item.id + ")\" style=\"text-align:right;\">" + item.home_team + " | " + item.home_line + "</a></div>";
+				displayTypeHome = "<div class=\"col-lg-3 col-sm-4 col-xs-5\"><a class=\"col-lg-12 col-sm-12 col-xs-12 btn btn-lg btn-success \" id=\"" + item.home_team + "\" href=\"#\" onclick=\"deleteBet(\'" + item.home_team + "\'," + item.id + ")\" style=\"text-align:right;\">" + item.home_team + " | " + item.home_score + "</a></div>";
 				
 				//make other side Unclickable
 				//displayTypeAway = "<div class=\"col-sm-2\"><a id=\"" + item.away_team + "\" href=\"#\" class=\"btn btn-default col-sm-12\" style=\"text-align:left;\">" + item.home_line*(-1) + " | " + item.away_team + "</a></div>";
@@ -153,7 +153,7 @@ function paintRow(item)
 			if (away_bets[z].email == tempemail && betUnlocked)  // !CAUTION!
 			{
 				//alert("I bet on that!" + home_bets.email)
-				displayTypeAway = "<div class=\"col-lg-3 col-sm-4 col-xs-5\"><a class=\"col-lg-12 col-sm-12 col-xs-12 btn btn-lg btn-success \" id=\"" + item.away_team + "\" href=\"#\" onclick=\"deleteBet(\'" + item.away_team + "\'," + item.id + ")\" style=\"text-align:left;\">" + item.away_team + "</a></div>";
+				displayTypeAway = "<div class=\"col-lg-3 col-sm-4 col-xs-5\"><a class=\"col-lg-12 col-sm-12 col-xs-12 btn btn-lg btn-success \" id=\"" + item.away_team + "\" href=\"#\" onclick=\"deleteBet(\'" + item.away_team + "\'," + item.id + ")\" style=\"text-align:left;\">" + item.away_score + " | " + item.away_team + "</a></div>";
 				
 				//make other side Unclickable
 				//displayTypeHome = "<div class=\"col-sm-2\"><a id=\"" + item.home_team + "\" href=\"#\" class=\"btn btn-default col-sm-12\" style=\"text-align:right;\">" + item.home_team + " | " + item.home_line + "</a></div>";
@@ -179,8 +179,8 @@ function paintRow(item)
 	goodHTML = goodHTML + "<div class=\"row\">";
 	goodHTML = goodHTML + "<div class=\"col-lg-2 col-sm-1 col-xs-0\"></div>";
 	goodHTML = goodHTML + "<div class=\"col-lg-3 col-sm-4 col-xs-5 text-left\"><h5>" + home_bets_string + "</h5></div>";
-	goodHTML = goodHTML + "<div class=\"col-lg-2 col-sm-2 col-xs-2 text-center\"><h5>" + item.home_score + " - " + item.away_score + "</h5></div>";
-	goodHTML = goodHTML + "<div class=\"col-lg-3 col-sm-4 col-xs-5 text-right\"><h5>" + away_bets_string + "</h4></div>";
+	goodHTML = goodHTML + "<div class=\"col-lg-2 col-sm-2 col-xs-2 text-center\"><h4>Line: " + item.home_line + "</h4></div>";
+	goodHTML = goodHTML + "<div class=\"col-lg-3 col-sm-4 col-xs-5 text-right\"><h5>" + away_bets_string + "</h5></div>";
 	goodHTML = goodHTML + "<div class=\"col-lg-2 col-sm-1 col-xs-0\"></div>";
 	goodHTML = goodHTML + "</div>";
 
