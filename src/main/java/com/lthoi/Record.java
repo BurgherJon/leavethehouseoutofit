@@ -26,9 +26,6 @@ public class Record
 	{
 		this.league_season_id = league_season_id;
 		this.email = email;
-		String strurl = "";
-        String struser = "";
-        String strpass = "";
 		String strquery;
 		double on;
 		double opp;
@@ -38,38 +35,23 @@ public class Record
 		log.info("league season passed: " + league_season_id);
 		log.info("email passed: " + email);
 		
+        
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
 		
-        
-        
 		Connection conn = null;
 		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);			
 			
 			strquery = "Select g.home_line AS home_line, b.home AS home, b.bet_amount AS bet_amount, g.home_score AS home_score, g.away_score AS away_score, g.isfinished AS isFinished FROM Bets b INNER JOIN Games g ON g.game_id = b.game_id INNER JOIN Users u ON u.user_id = b.user_id WHERE b.league_season_id = " + league_season_id + " AND u.email = '" + email + "';";
 			
@@ -171,7 +153,7 @@ public class Record
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.info("Connection String: " + strurl + "&" + struser + "&" + strpass);
+			log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
 			log.info(e.getMessage());
 		}
 	}

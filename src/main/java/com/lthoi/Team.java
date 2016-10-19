@@ -27,9 +27,6 @@ public class Team
 	
 	public Team (int id)
 	{
-		String strurl = "";
-        String struser = "";
-        String strpass = "";
 		String strquery;
 		final Logger log = Logger.getLogger(League_Season.class.getName());
 		
@@ -38,38 +35,22 @@ public class Team
 		
 		this.id = id;
 		
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
 		
-        
-        
 		Connection conn = null;
 		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);		
 			
 			strquery = "Select * From lthoidb.Teams WHERE team_id = '" + id + "';";
 			ResultSet rs = conn.createStatement().executeQuery(strquery);
@@ -89,7 +70,7 @@ public class Team
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.info("Connection String: " + strurl + "&" + struser + "&" + strpass);
+			log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
 			log.info(e.getMessage());
 		}
 	}
@@ -97,9 +78,6 @@ public class Team
 	//If the user passes the value of 0 for the id, then the team's info can be looked up from either the team name or the city.  The expectation here is that a string value representing one of the the two will be passed.  If it is the city than this "isCity" indicator should be 1.  Of it is the team name then it should be 0.
 	public Team (String value, int isCity)
 	{
-		String strurl = "";
-        String struser = "";
-        String strpass = "";
 		String strquery;
 		final Logger log = Logger.getLogger(League_Season.class.getName());
 		
@@ -107,38 +85,22 @@ public class Team
 		log.info("The indicator for whether it is the city is:  " + value);
 		log.info("isCity indicator: " + isCity);
 		
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
-		
-        
-        
+ 
 		Connection conn = null;
 		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);			
 			
 			if (isCity == 1)
 			{
@@ -167,7 +129,7 @@ public class Team
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.info("Connection String: " + strurl + "&" + struser + "&" + strpass);
+			log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
 			log.info(e.getMessage());
 		}
 	}

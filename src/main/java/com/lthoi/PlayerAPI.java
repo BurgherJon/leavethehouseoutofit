@@ -29,7 +29,6 @@ clientIds = {Constants.WEB_CLIENT_ID})
 
 public class PlayerAPI 
 {
-
 	@ApiMethod(name = "getGame")
     public Game getGame(User guser, @Named("league_season_id") int league_season_id, @Named("game_id") int game_id) throws UnauthorizedException
     {
@@ -43,46 +42,27 @@ public class PlayerAPI
     {
         Week response = new Week();
         
-        String strurl = "";
-        String struser = "";
-        String strpass = "";
-		String strquery;
+        String strquery;
 		final Logger log = Logger.getLogger(PlayerAPI.class.getName());
 		
 		log.info("Retreiving Current Week.");
 		
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
 		
-        
-        
 		Connection conn = null;
 		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);			
 			
 			strquery = "Select CurrentWeek From lthoidb.SysInfo";
 			ResultSet rs = conn.createStatement().executeQuery(strquery);
@@ -101,8 +81,8 @@ public class PlayerAPI
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.info("Connection String: " + strurl + "&" + struser + "&" + strpass);
-			log.info(e.getMessage());
+			log.severe("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
+			log.severe(e.getMessage());
 		}
         
         return response;
@@ -123,47 +103,28 @@ public class PlayerAPI
     {
     	ArrayList<Game> response = new ArrayList<Game>();
     	
-    	String strurl = "";
-        String struser = "";
-        String strpass = "";
 		String strquery;
 		final Logger log = Logger.getLogger(PlayerAPI.class.getName());
 		
 		log.info("Retreiving Relevant Games.");
 		log.info("league season passed: " + league_season_id);
 		
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
 		
-        
-        
 		Connection conn = null;
 		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);	
 			
 			//Careful, there's no ; at the end of this because you may add week number.
 			strquery = "SELECT game_id FROM lthoidb.Games g INNER JOIN lthoidb.Weeks w ON w.id = g.week_id INNER JOIN lthoidb.League_Seasons ls ON ls.season = w.season WHERE ls.league_season_id = " + league_season_id;
@@ -205,7 +166,7 @@ public class PlayerAPI
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.info("Connection String: " + strurl + "&" + struser + "&" + strpass);
+			log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
 			log.info(e.getMessage());
 		}
     	
@@ -219,47 +180,28 @@ public class PlayerAPI
     	ArrayList<League_Season> response;
     	response = new ArrayList<League_Season> ();
     	
-    	String strurl = "";
-        String struser = "";
-        String strpass = "";
 		String strquery;
 		final Logger log = Logger.getLogger(PlayerAPI.class.getName());
 		
 		log.info("Retreiving League Seasons.");
 		log.info("User logged in: " + guser.getEmail());
 		
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
 		
-        
-        
 		Connection conn = null;
 		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);			
 			
 			strquery = "SELECT lsum.league_season_id, u.user_id FROM League_Season_User_Map lsum INNER JOIN Users u ON u.user_id = lsum.user_id WHERE u.email = '" + guser.getEmail() + "';";
 			ResultSet rs = conn.createStatement().executeQuery(strquery);
@@ -282,7 +224,7 @@ public class PlayerAPI
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.info("Connection String: " + strurl + "&" + struser + "&" + strpass);
+			log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
 			log.info(e.getMessage());
 		}
     	
@@ -308,46 +250,27 @@ public class PlayerAPI
     @ApiMethod(name = "deleteBet", scopes = {Constants.EMAIL_SCOPE}, clientIds = {Constants.WEB_CLIENT_ID})
     public void deleteBet (User guser, @Named("id") int id, @Named("team_name") String team_name, @Named("league_season_id") int league_season_id) throws UnauthorizedException 
     {
-    	String strurl = "";
-        String struser = "";
-        String strpass = "";
         String strquery;
 		final Logger log = Logger.getLogger(PlayerAPI.class.getName());
 		
 		log.info("In the deleteBet method.");
 		
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
 		
-        
-        
 		Connection conn = null;
 		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);			
 			
 			strquery = "";
 			
@@ -382,7 +305,7 @@ public class PlayerAPI
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.info("Connection String: " + strurl + "&" + struser + "&" + strpass);
+			log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
 			log.info(e.getMessage());
 		}
     }
@@ -432,47 +355,28 @@ public class PlayerAPI
     {
     	
     	ArrayList<Player> response = new ArrayList<Player>();
-    	String strurl = "";
-        String struser = "";
-        String strpass = "";
 		String strquery;
 		final Logger log = Logger.getLogger(PlayerAPI.class.getName());
 		
 		log.info("In the getUsers method.");
 		log.info("League Season passed: " + league_season_id);
 		
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
 		
-        
-        
 		Connection conn = null;
 		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);			
 			
 			strquery = "Select user_id From lthoidb.League_Season_User_Map WHERE league_season_id = " + league_season_id + ";";
 			ResultSet rs = conn.createStatement().executeQuery(strquery);
@@ -495,7 +399,7 @@ public class PlayerAPI
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.info("Connection String: " + strurl + "&" + struser + "&" + strpass);
+			log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
 			log.info(e.getMessage());
 		}
     	
@@ -508,10 +412,6 @@ public class PlayerAPI
     @ApiMethod(name = "cronJob")
     public void cronJob ()
     {
-    	
-    	String strurl = "";
-        String struser = "";
-        String strpass = "";
 		String strquery;
 		int updates = 0;
 		Bet workingbet;
@@ -519,35 +419,22 @@ public class PlayerAPI
 		
 		log.info("In the Cron Job.");
 				
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
 		
-        Connection conn = null;
+		Connection conn = null;
+		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);			
 			
 			//Query will be updated to determine if there are any games that need to be frozen.
 			strquery = "SELECT b.bet_id, b.league_season_id, b.user_id FROM Bets b WHERE b.game_id IN (SELECT g.game_id FROM Games g WHERE g.START <= NOW() - INTERVAL (SELECT ls.freeze_minutes FROM League_Seasons ls WHERE ls.league_season_id = b.league_season_id) MINUTE) AND (b.hbprocessed <> 1 OR b.hbprocessed IS NULL);";
@@ -600,7 +487,7 @@ public class PlayerAPI
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.severe("Connection String: " + strurl + "&" + struser + "&" + strpass);
+			log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
 			log.severe(e.getMessage());
 		}
     	

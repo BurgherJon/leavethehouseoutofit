@@ -20,9 +20,21 @@
 					   }
 				}
 				
-				//LOCALCHANGE (SWITCH BETWEEN LOCAL AND NOT)
-				gapi.client.load('playerAPI', 'v1', callback, 'https://leavethehouseoutofit.appspot.com/_ah/api');
-				//gapi.client.load('playerAPI', 'v1', callback, 'http://localhost:8080/_ah/api');
+				
+				//Determine what environment the application is running in and leverage its corresponding API.
+				if (window.location.href.substring(7,16).toUpperCase() == 'localhost'.toUpperCase())
+				{
+					gapi.client.load('playerAPI', 'v1', callback, 'http://localhost:8080/_ah/api');	
+				}
+				else if (window.location.href.substring(8,28).toUpperCase() == 'leavethehouseoutofit'.toUpperCase() || window.location.href.substring(7, 17).toUpperCase() == 'leavethehouseoutofit'.toUpperCase())
+				{
+					gapi.client.load('playerAPI', 'v1', callback, 'https://leavethehouseoutofit.appspot.com/_ah/api');
+				}
+				else if (window.location.href.substring(8, 18).toUpperCase() == 'lthoi-test'.toUpperCase() || window.location.href.substring(7, 17).toUpperCase() == 'lthoi-test'.toUpperCase())
+				{
+					gapi.client.load('playerAPI', 'v1', callback, 'https://lthoi-test.appspot.com/_ah/api');
+				}
+				
 				
 				gapi.client.load('oauth2', 'v2', callback);
 			}
@@ -31,6 +43,13 @@
 			{	
 				var scopes = 'https://www.googleapis.com/auth/userinfo.email';
 				var client_id = '470243017734-h8rqcqsmvbhh4qrc95dra34anvo6h4ci.apps.googleusercontent.com';
+				
+				//If it's the test environment, use the right client_id.
+				if (window.location.href.substring(8, 18).toUpperCase() == 'lthoi-test'.toUpperCase() || window.location.href.substring(7, 17).toUpperCase() == 'lthoi-test'.toUpperCase())
+				{
+					client_id = '424262593373-ktjrme8l5aeqlgo61dei3lesj30m8fop.apps.googleusercontent.com';
+				}
+				
 				
 				gapi.auth.authorize({client_id: client_id,scope: scopes, immediate: mode},callbackparam);
 				

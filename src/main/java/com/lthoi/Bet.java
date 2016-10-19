@@ -37,10 +37,6 @@ public class Bet
 		int game_id = 0;
 		int home = -1;
 		double bet_amount = 0;
-		
-		String strurl = "";
-        String struser = "";
-        String strpass = "";
 		String strquery;
 		final Logger log = Logger.getLogger(Bet.class.getName());
 		
@@ -49,38 +45,22 @@ public class Bet
 		log.info("email passed: " + email);
 		log.info("team passed: " + team_name);
 		
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
 		
-        
-        
 		Connection conn = null;
 		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);			
 			
 			//Todo: this is an UGLY query as it unnaturally retreves the user's id
 			//Get all of this week's games so that we can find the one they wanted to bet on.
@@ -181,7 +161,7 @@ public class Bet
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.info("Connection String: " + strurl + "&" + struser + "&" + strpass);
+			log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
 			log.info(e.getMessage());
 		}
 		

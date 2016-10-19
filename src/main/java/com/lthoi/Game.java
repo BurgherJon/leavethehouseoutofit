@@ -43,9 +43,6 @@ public class Game
 	
 	public Game(int game_id, int league_season_id, String email)
 	{		
-		String strurl = "";
-        String struser = "";
-        String strpass = "";
 		String strquery;
 		int timetoremove = 0;
 		double bet_amount = 0;
@@ -57,38 +54,22 @@ public class Game
 		log.info("league season passed: " + league_season_id);
 		log.info("Game id passed: " + game_id);
 		
+		Environment env = new Environment();
         try
 		{
-			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production)
-			{
-				// Load the class that provides the new "jdbc:google:mysql://" prefix.
-				Class.forName("com.mysql.jdbc.GoogleDriver");
-				strurl = "jdbc:google:mysql://focal-acronym-94611:us-central1:lthoidb/lthoidb";
-				struser = "root";
-				strpass = "!VegasVaca2!";
-			}
-			else
-			{
-				//Local MySQL Instance to use during Dev.
-				Class.forName("com.mysql.jdbc.Driver");
-				strurl = "jdbc:mysql://127.0.0.1:3306/lthoidb";
-				struser = "root";
-				log.info("Running locally!");
-			}
+			Class.forName(env.db_driver);
 		}
 		catch (ClassNotFoundException e)
 		{
-			log.severe("Unable to create connection string for the database.");
+			log.severe("Unable to load database driver.");
 			log.severe(e.getMessage());
 		}
 		
-        
-        
 		Connection conn = null;
 		
 		try 
 		{
-			conn = DriverManager.getConnection(strurl, struser, strpass);			
+			conn = DriverManager.getConnection(env.db_url, env.db_user, env.db_password);		
 			
 			//TODO: This is an inefficient query as it unconditionally joins league seasons just so that I can get the seaason and freeze time values and pass it back.
 			strquery = "SELECT g.isFinished AS isFinished, ls.freeze_minutes as freeze_minutes, g.home_score as home_score, g.away_score as away_score, g.mins_remaining as mins_remaining, g.secs_remaining as secs_remaining, g.game_id AS game_id, ht.name AS home_name, ht.city AS home_city, at.name AS away_name, at.city AS away_city, w.name_short AS week_short, g.home_line AS home_line, g.start AS start FROM lthoidb.Games g INNER JOIN lthoidb.Teams at on at.team_id = g.away_team INNER JOIN lthoidb.Teams ht on ht.team_id = g.home_team INNER JOIN lthoidb.Weeks w on w.id = g.week_id INNER JOIN lthoidb.League_Seasons ls ON ls.season = w.season WHERE g.game_id = " + game_id + " AND ls.league_season_id = " + league_season_id + ";";
@@ -207,7 +188,7 @@ public class Game
 		catch (SQLException e) 
 		{
 			log.severe("SQL Exception processing!");
-			log.info("Connection String: " + strurl + "&" + struser + "&" + strpass);
+			log.info("Connection String: " + env.db_url + "&" + env.db_user + "&" + env.db_password);
 			log.info(e.getMessage());
 		}
 		
